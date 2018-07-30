@@ -2,26 +2,49 @@
 #include <stdlib.h>
 #include "grafo.h"
 
-grafo cria_grafo(unsigned int t)
+grafo cria_grafo(unsigned int tam)
 {
     int i, j;
 
     grafo g = (grafo)malloc(sizeof(tipo_grafo));
+
     if(g) {
-        g->vertices = (lista*) malloc(sizeof(lista) * t);
-        if(g->vertices) {
-            for (i = 0; i < t; i++) {
-                g->vertices[i] = cria_lista();
-                if (!g->vertices[i]) {
-                    for(j = 0; j < i; j++)
-                        termina_lista(g->vertices[j]);
-                    free(g->vertices);
-                    free(g);
+        g->graus_vertices = (int*) malloc(sizeof(int) * tam);
+        if(!g->graus_vertices) {
+            free(g);
+            return NULL;
+        }
+
+        for(j = 0; j < tam; j++)
+            g->graus_vertices[j] = 0;
+
+        g->vetor_indices = (int*) malloc(sizeof(int) * tam);
+        if(!g->graus_vertices) {
+            free(g->graus_vertices);
+            free(g);
+            return NULL;
+        }
+
+        for(j = 0; j < tam; j++)
+            g->vetor_indices[j] = j;
+
+        g->matriz_adj = (int**) malloc(sizeof(int*) * tam);
+        if(g->matriz_adj) {
+            for (i = 0; i < tam; i++) {
+                g->matriz_adj[i] = (int*) malloc(sizeof(int) * tam);
+                if (!g->matriz_adj[i]) {
+                    g->num_vertices = i;
+                    termina_grafo(g);
                     return NULL;
+                } else {
+                    for(j = 0; j < tam; j++)
+                        g->matriz_adj[i][j] = 0;
                 }
             }
-            g->num_vertices = t;
+            g->num_vertices = tam;
         } else {
+            free(g->graus_vertices);
+            free(g->vetor_indices);
             free(g);
             g = NULL;
         }
@@ -29,14 +52,17 @@ grafo cria_grafo(unsigned int t)
     return g;
 }
 
-int adiciona_aresta(grafo g, tipo_chave ch1, tipo_chave ch2)
+int adiciona_aresta(grafo g, int vert1, int vert2)
 {
-    tipo_elemento e;
-    e.chave = ch2;
-    insere_apos(g->vertices[ch1], e);
-    e.chave = ch1;
-    insere_apos(g->vertices[ch2], e);
-    return 1;
+    if (!g->matriz_adj[vert1][vert2] && vert1 != vert2) {
+        g->matriz_adj[vert1][vert2] = 1;
+        g->graus_vertices[vert1]++;
+        g->matriz_adj[vert2][vert1] = 1;
+        g->graus_vertices[vert2]++;
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 void termina_grafo(grafo g)
@@ -44,32 +70,54 @@ void termina_grafo(grafo g)
     int i;
 
     if(g) {
+        free(g->graus_vertices);
+        free(g->vetor_indices);
         for(i = 0; i < g->num_vertices; i++)
-            termina_lista(g->vertices[i]);
-        free(g->vertices);
+            free(g->matriz_adj[i]);
+        free(g->matriz_adj);
         free(g);
     }
 }
 
-void imprime_grafo(grafo g)
+int tamanho_grafo(grafo g)
 {
-    int i;
-
-    printf("\nLISTA DE ADJACENCIA DO GRAFO:\n");
-    for(i = 0; i < g->num_vertices; i++) {
-        printf("\n %d: ", (i + 1));
-        imprime_lista(g->vertices[i]);
-        printf("\n");
-    }
+    return g->num_vertices;
 }
 
-int pesquisa_adjascente(grafo g, tipo_chave ch1, lista l)
+int posicao_real_vertice(grafo g, int indice_vertice)
+{
+    return g->vetor_indices[indice_vertice];
+}
+
+void imprime_grafo(grafo g)
+{
+    int i, j;
+
+    printf("\nMATRIZ DE ADJACENCIA DO GRAFO:\n\n");
+    for(i = 0; i < g->num_vertices; i++) {
+        for(j = 0; j < g->num_vertices; j++)
+            printf(" %d ", g->matriz_adj[i][j]);
+        printf("\n");
+    }
+    printf("\nGRAUS DOS VERTICES DO GRAFO:\n\n");
+    for(i = 0; i < g->num_vertices; i++) {
+        printf(" %d ", g->graus_vertices[i]);
+    }
+    printf("\n");
+    printf("\nVETOR INDICES DO GRAFO:\n\n");
+    for(i = 0; i < g->num_vertices; i++) {
+        printf(" %d ", g->vetor_indices[i]);
+    }
+    printf("\n");
+}
+
+int pesquisa_adjascente(grafo g, int vert, lista lista_vertices)
 {
     tipo_nodo *p;
 
-    p = l->first;
+    p = lista_vertices->first;
     while(p) {
-        if (pesquisa_chave(g->vertices[p->item.chave], ch1))
+        if (g->matriz_adj[p->item.chave][vert] == 1)
             return 1;
         p = p->next;
     }
@@ -77,14 +125,14 @@ int pesquisa_adjascente(grafo g, tipo_chave ch1, lista l)
     return 0;
 }
 
-int pesquisa_adjascente_exceto(grafo g, tipo_chave ch1, lista l, tipo_chave ch2)
+int pesquisa_adjascente_exceto(grafo g, int vert1, lista l, int vert_excluido)
 {
     tipo_nodo *p;
 
     p = l->first;
     while(p) {
-        if (p->item.chave != ch2) {
-            if (pesquisa_chave(g->vertices[p->item.chave], ch1))
+        if (p->item.chave != vert_excluido) {
+            if (g->matriz_adj[p->item.chave][vert1] == 1)
                 return 1;
         }
         p = p->next;
@@ -93,7 +141,7 @@ int pesquisa_adjascente_exceto(grafo g, tipo_chave ch1, lista l, tipo_chave ch2)
     return 0;
 }
 
-void merge(grafo g, int l, int m, int r, int* vetor_ind, int* pesos_itens)
+void merge(grafo g, int l, int m, int r, int* pesos_itens)
 {
     int i, j, k;
     int n1 = m - l + 1;
@@ -105,26 +153,26 @@ void merge(grafo g, int l, int m, int r, int* vetor_ind, int* pesos_itens)
     vetor_aux2 = (int*) malloc(sizeof(int) * n2);
 
     for (i = 0; i < n1; i++)
-        vetor_aux1[i] = vetor_ind[l + i];
+        vetor_aux1[i] = g->vetor_indices[l + i];
     for (j = 0; j < n2; j++)
-        vetor_aux2[j] = vetor_ind[m + 1+ j];
+        vetor_aux2[j] = g->vetor_indices[m + 1+ j];
 
     i = 0;
     j = 0;
     k = l;
     while (i < n1 && j < n2) {
-        if (tamanho_lista(g->vertices[vetor_aux1[i]]) > tamanho_lista(g->vertices[vetor_aux2[j]])) {
-            vetor_ind[k] = vetor_aux1[i];
+        if (g->graus_vertices[vetor_aux1[i]] > g->graus_vertices[vetor_aux2[j]]) {
+            g->vetor_indices[k] = vetor_aux1[i];
             i++;
-        } else if (tamanho_lista(g->vertices[vetor_aux1[i]]) < tamanho_lista(g->vertices[vetor_aux2[j]])) {
-            vetor_ind[k] = vetor_aux2[j];
+        } else if (g->graus_vertices[vetor_aux1[i]] < g->graus_vertices[vetor_aux2[j]]) {
+            g->vetor_indices[k] = vetor_aux2[j];
             j++;
         } else {
             if (pesos_itens[vetor_aux1[i]] >= pesos_itens[vetor_aux2[j]]) {
-                vetor_ind[k] = vetor_aux1[i];
+                g->vetor_indices[k] = vetor_aux1[i];
                 i++;
             } else {
-                vetor_ind[k] = vetor_aux2[j];
+                g->vetor_indices[k] = vetor_aux2[j];
                 j++;
             }
         }
@@ -132,13 +180,13 @@ void merge(grafo g, int l, int m, int r, int* vetor_ind, int* pesos_itens)
     }
 
     while (i < n1) {
-        vetor_ind[k] = vetor_aux1[i];
+        g->vetor_indices[k] = vetor_aux1[i];
         i++;
         k++;
     }
 
     while (j < n2) {
-        vetor_ind[k] = vetor_aux2[j];
+        g->vetor_indices[k] = vetor_aux2[j];
         j++;
         k++;
     }
@@ -147,24 +195,20 @@ void merge(grafo g, int l, int m, int r, int* vetor_ind, int* pesos_itens)
     free(vetor_aux2);
 }
 
-void mergeSort(grafo g, int l, int r, int* vetor_ind, int* pesos_itens)
+void mergeSort(grafo g, int l, int r, int* pesos_itens)
 {
     if (l < r) {
         int m = l + (r - l) / 2;
 
-        mergeSort(g, l, m, vetor_ind, pesos_itens);
-        mergeSort(g, m+1, r, vetor_ind, pesos_itens);
+        mergeSort(g, l, m, pesos_itens);
+        mergeSort(g, m+1, r, pesos_itens);
 
-        merge(g, l, m, r, vetor_ind, pesos_itens);
+        merge(g, l, m, r, pesos_itens);
     }
 }
 
-void ordena(grafo g, int tam, int* vetor_ind, int* pesos_itens)
+void ordena(grafo g, int* pesos_itens)
 {
-    int i;
-
-    for(i = 0; i < tam; i++)
-        vetor_ind[i] = i;
-    mergeSort(g, 0, (tam - 1), vetor_ind, pesos_itens);
+    mergeSort(g, 0, (g->num_vertices - 1), pesos_itens);
 }
 

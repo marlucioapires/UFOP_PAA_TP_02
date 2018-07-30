@@ -3,10 +3,10 @@
 
 #include "grafo.h"
 
-int firstFit_conflitante(int*, int, int, grafo, int*, lista**, int**);
+int firstFit_conflitante(int*, int, grafo, lista**, int**);
 
-int bestFit_conflitante(int*, int, int, grafo, int*, lista**, int**);
+int bestFit_conflitante(int*, int, grafo, lista**, int**);
 
-int worstFit_conflitante(int*, int, int, grafo, int*, lista**, int**);
+int worstFit_conflitante(int*, int, grafo, lista**, int**);
 
 #endif // ALGORITMOS_GULOSOS_H_INCLUDED

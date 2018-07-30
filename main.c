@@ -32,9 +32,9 @@ int main(int argc, char* argv[])
     int sim_ann = 0, ordem_dec = 0, metodo = 1;
     char arquivo_entrada[1024], arquivo_saida[1024];
 
-    int *vetor_indices, *vetor_sobras_bins;
+    int *vetor_sobras_bins;
     lista* conteineres_com_solucao = NULL;
-    int capacidade, *vetor_pesos, j, tam, resultado = 0;
+    int capacidade, *vetor_pesos, j, resultado = 0;
     grafo g = NULL;
 
     if (argc < 4) {
@@ -48,42 +48,33 @@ int main(int argc, char* argv[])
             return 0;
         }
 
-        g = processa_arquivo_entrada(arquivo_entrada, &capacidade, &vetor_pesos, &tam);
+        g = processa_arquivo_entrada(arquivo_entrada, &capacidade, &vetor_pesos);
 
         if (!g) {
             return 0;
         }
 
-        vetor_indices = (int*) malloc(sizeof(int) * g->num_vertices);
-        if (!vetor_indices) {
-            termina_grafo(g);
-            return 0;
-        }
-
-        for (j = 0; j < g->num_vertices; j++)
-            vetor_indices[j] = j;
-
         if (ordem_dec)
-            ordena(g, g->num_vertices , vetor_indices, vetor_pesos);
+            ordena(g, vetor_pesos);
 
         switch (metodo) {
         case 2:
-            resultado = bestFit_conflitante(vetor_pesos, tam, capacidade, g, vetor_indices, &conteineres_com_solucao, &vetor_sobras_bins);
+            resultado = bestFit_conflitante(vetor_pesos, capacidade, g, &conteineres_com_solucao, &vetor_sobras_bins);
             break;
         case 3:
-            resultado = worstFit_conflitante(vetor_pesos, tam, capacidade, g, vetor_indices, &conteineres_com_solucao, &vetor_sobras_bins);
+            resultado = worstFit_conflitante(vetor_pesos, capacidade, g, &conteineres_com_solucao, &vetor_sobras_bins);
             break;
         default:
-            resultado = firstFit_conflitante(vetor_pesos, tam, capacidade, g, vetor_indices, &conteineres_com_solucao, &vetor_sobras_bins);
+            resultado = firstFit_conflitante(vetor_pesos, capacidade, g, &conteineres_com_solucao, &vetor_sobras_bins);
             break;
         }
 
         printf("\nSOLUCAO INICIAL: %d", resultado);
 
         if (sim_ann) {
-            resultado = simulated_annealing(vetor_pesos, tam, capacidade, g, vetor_indices,
-                                            conteineres_com_solucao, vetor_sobras_bins, resultado,
-                                            alpha, temperatura, epsilon, inicio, max_seconds);
+            resultado = simulated_annealing(vetor_pesos, capacidade, g, conteineres_com_solucao,
+                                            vetor_sobras_bins, resultado, alpha, temperatura,
+                                            epsilon, inicio, max_seconds);
 
             gera_arquivo_saida(arquivo_saida, conteineres_com_solucao, resultado);
 
@@ -92,7 +83,6 @@ int main(int argc, char* argv[])
 
         gera_arquivo_saida(arquivo_saida, conteineres_com_solucao, resultado);
 
-        free(vetor_indices);
         termina_grafo(g);
         free(vetor_pesos);
         free(vetor_sobras_bins);

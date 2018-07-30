@@ -6,7 +6,7 @@
 
 #define TAM_LINHA 8192
 
-grafo processa_arquivo_entrada(const char* nome_arquivo, int* capacidade, int**vetor_pesos, int* tam)
+grafo processa_arquivo_entrada(const char* nome_arquivo, int* capacidade, int**vetor_pesos)
 {
     FILE *ptr_arq;
     int n, c, i, nr_item, peso_item, conflito_item;
@@ -56,7 +56,6 @@ grafo processa_arquivo_entrada(const char* nome_arquivo, int* capacidade, int**v
                 }
             }
             *vetor_pesos = vetor;
-            *tam = n;
         }
         fclose(ptr_arq);
     }

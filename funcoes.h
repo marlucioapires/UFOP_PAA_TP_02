@@ -3,7 +3,7 @@
 
 #include "grafo.h"
 
-grafo processa_arquivo_entrada(const char*, int*, int**, int*);
+grafo processa_arquivo_entrada(const char*, int*, int**);
 
 int gera_arquivo_saida(const char*, lista*, int);
 

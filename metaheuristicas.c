@@ -12,7 +12,7 @@ float gera_probabilidade();
 void elimina_bin(lista*, int*, int, int);
 double calcula_segundos_transcorridos(clock_t);
 
-int simulated_annealing(int *weight, int n, int capacidade, grafo g, int *vetor_ind, lista *bins_solucao, int *bin_rem,
+int simulated_annealing(int *weight, int capacidade, grafo g, lista *bins_solucao, int *bin_rem,
                         int tam_solucao, float alpha, float temperatura, float epsilon, clock_t tempo_inicial,
                         long int segundos_tempo_maximo)
 {
@@ -29,7 +29,7 @@ int simulated_annealing(int *weight, int n, int capacidade, grafo g, int *vetor_
     if (alpha <= 0 || alpha >= 1)
         alpha = 0.999;
 
-    for(j = 0; j < n; j++)
+    for(j = 0; j < tamanho_grafo(g); j++)
         lower_bound += weight[j];
 
     if (temperatura <= 0) {
