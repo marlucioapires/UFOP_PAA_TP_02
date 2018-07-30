@@ -66,8 +66,8 @@ grafo processa_arquivo_entrada(const char* nome_arquivo, int* capacidade, int**v
 int gera_arquivo_saida(const char* nome_arquivo, lista* bins_com_solucao, int num_bins)
 {
     FILE *ptr_arq; // Ponteiro para o arquivo a ser manipulado.
-    int i; // Variável auxiliar.
-    tipo_nodo *p;
+    int i, j, tam; // Variável auxiliar.
+    int *vetor_aux;
 
     ptr_arq = fopen(nome_arquivo, "w");
 
@@ -79,11 +79,19 @@ int gera_arquivo_saida(const char* nome_arquivo, lista* bins_com_solucao, int nu
 
             fprintf(ptr_arq, "%d ", tamanho_lista(bins_com_solucao[i]));
 
-            p = bins_com_solucao[i]->first;
-            while(p) {
-                fprintf(ptr_arq, "%d ", (p->item.chave + 1));
-                p = p->next;
+            vetor_aux = retorna_vetor_chaves_lista(bins_com_solucao[i], &tam);
+
+            if (!vetor_aux) {
+                fclose(ptr_arq);
+                return 0;
             }
+
+            for(j = 0; j < tam; j++) {
+                fprintf(ptr_arq, "%d ", vetor_aux[j] + 1);
+            }
+
+            free(vetor_aux);
+
             fprintf(ptr_arq, "\n");
         }
 

@@ -6,7 +6,7 @@ grafo cria_grafo(unsigned int tam)
 {
     int i, j;
 
-    grafo g = (grafo)malloc(sizeof(tipo_grafo));
+    grafo g = (grafo) malloc(sizeof(tipo_grafo));
 
     if(g) {
         g->graus_vertices = (int*) malloc(sizeof(int) * tam);
@@ -113,32 +113,12 @@ void imprime_grafo(grafo g)
 
 int pesquisa_adjascente(grafo g, int vert, lista lista_vertices)
 {
-    tipo_nodo *p;
-
-    p = lista_vertices->first;
-    while(p) {
-        if (g->matriz_adj[p->item.chave][vert] == 1)
-            return 1;
-        p = p->next;
-    }
-
-    return 0;
+    return pesquisa_indices_vetor_na_lista(lista_vertices, g->matriz_adj[vert]);
 }
 
-int pesquisa_adjascente_exceto(grafo g, int vert1, lista l, int vert_excluido)
+int pesquisa_adjascente_exceto(grafo g, int vert, lista lista_vertices, int vert_excluido)
 {
-    tipo_nodo *p;
-
-    p = l->first;
-    while(p) {
-        if (p->item.chave != vert_excluido) {
-            if (g->matriz_adj[p->item.chave][vert1] == 1)
-                return 1;
-        }
-        p = p->next;
-    }
-
-    return 0;
+    return pesquisa_indices_vetor_na_lista_exceto(lista_vertices, g->matriz_adj[vert], vert_excluido);
 }
 
 void merge(grafo g, int l, int m, int r, int* pesos_itens)

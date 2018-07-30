@@ -249,3 +249,54 @@ int transfere_elemento(lista l1, int indice, lista l2)
         return 1;
     }
 }
+
+tipo_chave* retorna_vetor_chaves_lista(lista l, int *tamanho) {
+    int tam = l->tamanho;
+    tipo_chave *vetor = NULL;
+    tipo_nodo *p;
+
+    if (tam > 0) {
+        vetor = (tipo_chave*) malloc(sizeof(tipo_chave) * tam);
+        (*tamanho) = 0;
+        if (vetor) {
+            p = l->first;
+            while(p) {
+                vetor[(*tamanho)] = p->item.chave;
+                (*tamanho)++;
+                p = p->next;
+            }
+        }
+    }
+
+    return vetor;
+}
+
+int pesquisa_indices_vetor_na_lista(lista l, int *vetor)
+{
+    tipo_nodo *p;
+
+    p = l->first;
+    while(p) {
+        if (vetor[p->item.chave] == 1)
+            return 1;
+        p = p->next;
+    }
+
+    return 0;
+}
+
+int pesquisa_indices_vetor_na_lista_exceto(lista l, int *vetor, int indice_excluido)
+{
+    tipo_nodo *p;
+
+    p = l->first;
+    while(p) {
+        if (p->item.chave != indice_excluido) {
+            if (vetor[p->item.chave] == 1)
+                return 1;
+        }
+        p = p->next;
+    }
+
+    return 0;
+}
