@@ -96,4 +96,4 @@ int main(int argc, char* argv[])
     printf("\nTEMPO DE EXECUCAO: %.3f\n", segundos); // Exibe o tempo de execução do programa.
 
     return 0;
-}
+} // fim da função main
