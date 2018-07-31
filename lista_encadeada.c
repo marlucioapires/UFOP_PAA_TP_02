@@ -250,7 +250,8 @@ int transfere_elemento(lista l1, int indice, lista l2)
     }
 }
 
-tipo_chave* retorna_vetor_chaves_lista(lista l, int *tamanho) {
+tipo_chave* retorna_vetor_chaves_lista(lista l, int *tamanho)
+{
     int tam = l->tamanho;
     tipo_chave *vetor = NULL;
     tipo_nodo *p;

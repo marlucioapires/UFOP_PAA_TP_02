@@ -11,6 +11,6 @@ void inicia_gerador_numero_aleatorio();
 
 int gera_numero_aleatorio(int);
 
-int processa_parametros_entrada(int, char**, char*, char *, float *, float*, float*, long int*, int*, int*, int*);
+int processa_parametros_entrada(int, char**, char*, char *, double*, double*, double*, long int*, int*, int*, int*);
 
 #endif // FUNCOES_H_INCLUDED

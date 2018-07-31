@@ -26,7 +26,7 @@ int firstFit_conflitante(int* weight, int c, grafo g, lista**conteineres, int**v
             }
         }
 
-        if (j==res) {
+        if (j == res) {
             bin_rem[res] = c - weight[posicao_real_vertice(g, i)];
             bin_itens[j] = cria_lista();
             e.chave = posicao_real_vertice(g, i);

@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
     clock_t inicio = clock(), fim; // Variáveis para medição do tempo de execução.
     double segundos; // Variável auxiliar.
 
-    float alpha = -1.0, epsilon = -1.0, temperatura = -1.0;
+    double alpha = -1.0, epsilon = -1.0, temperatura = -1.0;
     long int max_seconds;
     int sim_ann = 0, ordem_dec = 0, metodo = 1;
     char arquivo_entrada[1024], arquivo_saida[1024];

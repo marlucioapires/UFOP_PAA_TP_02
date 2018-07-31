@@ -5,21 +5,23 @@
 #include "metaheuristicas.h"
 #include "funcoes.h"
 
+void realiza_troca_bins(int*, int, lista*, int*, int*, int, int, int, int);
 void escolhe_itens_permuta(int*, int*, int, int*, int*, lista*);
-unsigned long int computa_proxima_solucao(int*, int*, int, int*, int*, int*, int, grafo, lista*, int*, int);
+unsigned long int computa_proxima_solucao(int*, int*, int, int*, int*, int*, int, grafo, lista*,
+        int*, int);
 unsigned long int funcao_para_comparacao_solucoes(int*, int, int, int, int, int, int);
 float gera_probabilidade();
 void elimina_bin(lista*, int*, int, int);
 double calcula_segundos_transcorridos(clock_t);
 
 int simulated_annealing(int *weight, int capacidade, grafo g, lista *bins_solucao, int *bin_rem,
-                        int tam_solucao, float alpha, float temperatura, float epsilon, clock_t tempo_inicial,
-                        long int segundos_tempo_maximo)
+                        int tam_solucao, double alpha, double temperatura, double epsilon,
+                        clock_t tempo_inicial, long int segundos_tempo_maximo)
 {
 
-    int j, c1, c2, pos_i1, pos_i2, item1, item2, peso1, peso2, trocar_solucao;
+    int j, c1, c2, pos_i1, pos_i2, trocar_solucao;
 
-    unsigned long sol1, sol2;
+    unsigned long int sol1, sol2;
 
     long int lower_bound = 0;
 
@@ -45,11 +47,11 @@ int simulated_annealing(int *weight, int capacidade, grafo g, lista *bins_soluca
 
     sol1 = funcao_para_comparacao_solucoes(bin_rem, tam_solucao, capacidade, 0, 0, 0, 0);
 
-    while ((calcula_segundos_transcorridos(tempo_inicial) < segundos_tempo_maximo) && (temperatura > epsilon) &&
-            tam_solucao > lower_bound) {
+    while ( (calcula_segundos_transcorridos(tempo_inicial) < segundos_tempo_maximo) &&
+            (temperatura > epsilon) && (tam_solucao > lower_bound) ) {
 
-        sol2 = computa_proxima_solucao(&c1, &c2, tam_solucao, &pos_i1, &pos_i2, weight, capacidade, g, bins_solucao,
-                                       bin_rem, tam_solucao);
+        sol2 = computa_proxima_solucao(&c1, &c2, tam_solucao, &pos_i1, &pos_i2, weight,
+                                       capacidade, g, bins_solucao, bin_rem, tam_solucao);
 
         if (sol2 != ERRO) {
 
@@ -66,49 +68,8 @@ int simulated_annealing(int *weight, int capacidade, grafo g, lista *bins_soluca
             if (trocar_solucao) {
                 sol1 = sol2;
 
-                if (pos_i1 == -1) {
-
-                    item2 = get_chave_posicao(bins_solucao[c2], pos_i2);
-
-                    peso2 = weight[item2];
-
-                    transfere_elemento(bins_solucao[c2], pos_i2, bins_solucao[c1]);
-
-                    bin_rem[c1] -= peso2;
-                    bin_rem[c2] += peso2;
-
-                    if (bin_rem[c2] == capacidade) { // Conteiner está vazio
-                        elimina_bin(bins_solucao, bin_rem, tam_solucao, c2);
-                        tam_solucao--;
-                    }
-                } else if (pos_i2 == -1) {
-
-                    item1 = get_chave_posicao(bins_solucao[c1], pos_i1);
-
-                    peso1 = weight[item1];
-
-                    transfere_elemento(bins_solucao[c1], pos_i1, bins_solucao[c2]);
-
-                    bin_rem[c1] += peso1;
-                    bin_rem[c2] -= peso1;
-
-                    if (bin_rem[c1] == capacidade) { // Conteiner está vazio
-                        elimina_bin(bins_solucao, bin_rem, tam_solucao, c1);
-                        tam_solucao--;
-                    }
-                } else {
-
-                    item1 = get_chave_posicao(bins_solucao[c1], pos_i1);
-                    item2 = get_chave_posicao(bins_solucao[c2], pos_i2);
-
-                    peso1 = weight[item1];
-                    peso2 = weight[item2];
-
-                    troca_chaves(bins_solucao[c1], pos_i1, bins_solucao[c2], pos_i2);
-
-                    bin_rem[c1] += peso1 - peso2;
-                    bin_rem[c2] += peso2 - peso1;
-                }
+                realiza_troca_bins(weight, capacidade, bins_solucao, bin_rem, &tam_solucao,
+                                   c1, c2, pos_i1, pos_i2);
             }
             temperatura *= alpha;
         }
@@ -116,7 +77,58 @@ int simulated_annealing(int *weight, int capacidade, grafo g, lista *bins_soluca
     return tam_solucao;
 }
 
-void escolhe_itens_permuta(int* c1, int* c2, int max_c, int* pos_i1, int* pos_i2, lista *bins_solucao)
+void realiza_troca_bins(int *weight, int capacidade, lista *bins_solucao, int *bin_rem,
+                        int *tam_solucao, int c1, int c2, int pos_i1, int pos_i2)
+{
+    int item1, item2, peso1, peso2;
+
+    if (pos_i1 == -1) {
+
+        item2 = get_chave_posicao(bins_solucao[c2], pos_i2);
+
+        peso2 = weight[item2];
+
+        transfere_elemento(bins_solucao[c2], pos_i2, bins_solucao[c1]);
+
+        bin_rem[c1] -= peso2;
+        bin_rem[c2] += peso2;
+
+        if (bin_rem[c2] == capacidade) { // Conteiner está vazio
+            elimina_bin(bins_solucao, bin_rem, (*tam_solucao), c2);
+            (*tam_solucao)--;
+        }
+    } else if (pos_i2 == -1) {
+
+        item1 = get_chave_posicao(bins_solucao[c1], pos_i1);
+
+        peso1 = weight[item1];
+
+        transfere_elemento(bins_solucao[c1], pos_i1, bins_solucao[c2]);
+
+        bin_rem[c1] += peso1;
+        bin_rem[c2] -= peso1;
+
+        if (bin_rem[c1] == capacidade) { // Conteiner está vazio
+            elimina_bin(bins_solucao, bin_rem, (*tam_solucao), c1);
+            (*tam_solucao)--;
+        }
+    } else {
+
+        item1 = get_chave_posicao(bins_solucao[c1], pos_i1);
+        item2 = get_chave_posicao(bins_solucao[c2], pos_i2);
+
+        peso1 = weight[item1];
+        peso2 = weight[item2];
+
+        troca_chaves(bins_solucao[c1], pos_i1, bins_solucao[c2], pos_i2);
+
+        bin_rem[c1] += peso1 - peso2;
+        bin_rem[c2] += peso2 - peso1;
+    }
+}
+
+void escolhe_itens_permuta(int* c1, int* c2, int max_c, int* pos_i1, int* pos_i2,
+                           lista *bins_solucao)
 {
 
     if (max_c > 1) {
@@ -130,7 +142,8 @@ void escolhe_itens_permuta(int* c1, int* c2, int max_c, int* pos_i1, int* pos_i2
 }
 
 unsigned long int computa_proxima_solucao(int* c1, int* c2, int max_c, int* pos_i1, int* pos_i2,
-        int *weight, int c, grafo g, lista *bins_solucao, int *bin_rem, int tam_solucao)
+        int *weight, int c, grafo g, lista *bins_solucao,
+        int *bin_rem, int tam_solucao)
 {
     int peso1, peso2, item1, item2, escolha;
 
@@ -165,7 +178,8 @@ unsigned long int computa_proxima_solucao(int* c1, int* c2, int max_c, int* pos_
     return ERRO;
 }
 
-unsigned long int funcao_para_comparacao_solucoes(int *bin_rem, int tam, int capacidade, int c1, int c2, int peso1, int peso2)
+unsigned long int funcao_para_comparacao_solucoes(int *bin_rem, int tam, int capacidade, int c1,
+        int c2, int peso1, int peso2)
 {
     int i;
     unsigned long int soma = 0, soma_pesos_bin;

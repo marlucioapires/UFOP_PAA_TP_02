@@ -113,8 +113,8 @@ int gera_numero_aleatorio(int a)
     return rand( ) % a;
 }
 
-int processa_parametros_entrada(int argc, char**argv, char *arquivo_entrada, char *arquivo_saida, float *alpha,
-                                float *epsilon, float *temperatura, long int *max_seconds, int *sim_ann,
+int processa_parametros_entrada(int argc, char**argv, char *arquivo_entrada, char *arquivo_saida, double *alpha,
+                                double *epsilon, double *temperatura, long int *max_seconds, int *sim_ann,
                                 int *ordem_dec, int *metodo)
 {
     int i;
