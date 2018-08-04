@@ -2,10 +2,10 @@
 Segundo trabalho prático da disciplina Projeto e Análise de Algoritmos, semestre 2018/01, do mestrado acadêmico em Ciência da Computação da UFOP.
 
 <strong>Compilar o código:</strong> <br />
-    gcc -std=c99 -Wall -g *.c -lm -o binario
+    make
     
 <strong>Exemplo de execução:</strong> <br />
-    ./binario bpinstances/da-BPWC_1_9_9.txt bpinstances/da-BPWC_1_9_9_02.sol 60 m=1 d=1 s=1 t=1000000 a=0.99999 e=0.00001
+    ./bin/bpc bpinstances/da-BPWC_1_9_9.txt bpinstances/da-BPWC_1_9_9_02.sol 60 m=1 d=1 s=1 t=1000000 a=0.99999 e=0.00001
     
 <strong>onde os parâmetros são:</strong> <br />
      m=1|2|3        (Informe 1 para First-Fit, 2 para Best-Fit ou 3 para Worst-Fit.)<br />
