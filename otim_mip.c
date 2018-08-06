@@ -18,10 +18,39 @@ void otimiza_mip( int n, int nBins, const int r[], const int w[], int li[], graf
 
     char *ivBin; 
     ivBin = calloc( n, sizeof(char) );
-    int *binIdx;
+    int *binIdx; // binIdx[i] is which is the new index of bin i
     binIdx =  calloc( n, sizeof(int) );
 
+    int *idxBin; // idxBin[i] returns the old index of bin i
+    idxBin =  calloc( n, sizeof(int) );
 
+    int *itemIdx; // itemIdx[i] returns the new index of item i
+    itemIdx =  calloc( n, sizeof(int) );
+
+    int *idxItem; // itemIdx[i] returns the old index of item i
+    idxItem =  calloc( n, sizeof(int) );
+
+    for ( int i=0 ; (i<n) ; ++i )
+        binIdx[i] = -1;
+
+    
+    // number of discovered bins while traversing list
+    int nDB = 0;
+
+    for ( int i=0 ; (i<n) ; ++i )
+    {
+        if (li[i] != -1)
+        {
+            if (ivBin[li[i]]==0)
+            {
+                ivBin[li[i]] = 1;
+                binIdx[li[i]] = nDB;
+                idxBin[nDB] = li[i];
+
+                nDB++;
+            }
+        }
+    } // all items
 
     free( binIdx );
     free( ivBin );
