@@ -20,6 +20,7 @@ all:./bin/bpc
 ./bin/bpc:./bin/bpc.o
 	$(CXX) $(CXXFLAGS) $(LDFLAGS) ./bin/bpc.o ./bin/algoritmos_gulosos.o ./bin/funcoes.o \
 	    ./bin/grafo.o ./bin/metaheuristicas.o ./bin/otim_mip.o ./bin/lp.o \
+	    ./bin/containers.o ./bin/strutils.o ./bin/memory.o \
 	    ./bin/lista_encadeada.o -o ./bin/bpc $(LIBRARIES)
 
 clean:
@@ -46,6 +47,18 @@ clean:
 ./bin/lp.o:lp.cpp lp.h
 	mkdir -p ./bin ; $(CXX) -c $(CFLAGS) lp.cpp -o ./bin/lp.o
 
-./bin/otim_mip.o:otim_mip.c otim_mip.h ./bin/lp.o
+./bin/otim_mip.o:otim_mip.c otim_mip.h ./bin/lp.o ./bin/containers.o
 	mkdir -p ./bin ; $(CC) -c $(CFLAGS) otim_mip.c -o ./bin/otim_mip.o
+
+
+./bin/containers.o:containers.c containers.h ./bin/strutils.o
+	mkdir -p ./bin ; $(CC) -c $(CFLAGS) containers.c -o ./bin/containers.o
+
+./bin/strutils.o:strutils.c strutils.h ./bin/memory.o
+	mkdir -p ./bin ; $(CC) -c $(CFLAGS) strutils.c -o ./bin/strutils.o
+
+./bin/memory.o:memory.c memory.h
+	mkdir -p ./bin ; $(CC) -c $(CFLAGS) memory.c -o ./bin/memory.o
+
+
 

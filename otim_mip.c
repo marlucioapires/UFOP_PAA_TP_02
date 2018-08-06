@@ -2,6 +2,7 @@
 #include "lp.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include "containers.h"
 
 /*
  * n      : nr de items no problema
@@ -12,7 +13,7 @@
  * G      : grafo de conflitos
  * nli    : nova localização (bin)
  **/
-void otimiza_mip( int n, int nBins, const int r[], const int w[], int li[], grafo G, int nli[] )
+void otimiza_mip( int n, int c, int nBins, const int r[], const int w[], int li[], grafo G, int nli[] )
 {
     LinearProgram *mip = lp_create();
 
@@ -36,6 +37,7 @@ void otimiza_mip( int n, int nBins, const int r[], const int w[], int li[], graf
     
     // number of discovered bins while traversing list
     int nDB = 0;
+    int nDI = 0;
 
     for ( int i=0 ; (i<n) ; ++i )
     {
@@ -49,8 +51,18 @@ void otimiza_mip( int n, int nBins, const int r[], const int w[], int li[], graf
 
                 nDB++;
             }
+
+            itemIdx[li[i]] = nDI;
+            idxItem[nDI] = li[i];
+
+            nDI++;
         }
     } // all items
+
+    StrV *vnames = strv_create(80);
+
+    strv_free(&vnames);
+
 
     free( binIdx );
     free( ivBin );
