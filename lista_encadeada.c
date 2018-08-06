@@ -142,8 +142,10 @@ tipo_chave get_next_chave(lista l, tipo_nodo** n)
     if (*n)
         return (*n)->item.chave; // Retorna o conteúdo do nó.
     else
-        return 0; // Retorna 0 (zero) em caso de não haver nó (NULL).
+        return -1; // Retorna -1 (menos um) em caso de não haver nó (NULL).
 } // fim da função get_next_chave
+
+
 
 void imprime_lista(lista l)
 {

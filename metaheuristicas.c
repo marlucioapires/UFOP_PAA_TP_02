@@ -32,7 +32,64 @@ double calcula_segundos_transcorridos(clock_t);
 // peso item
 // grafo de conflitos
 void otimiza_mip( int nBins, int *ibin, int *r,
-        int nItens, int *item, int *bin, int *w, grafo g );
+        int nItens, int *item, int *bin, int *w, grafo g ) {
+    int aux = MAX_BINS_O, *vetor_bins_sorteados, todos = 0, i, j, k, repetido;
+    int *vetor_itens_selecionados;
+
+    if (nBins < MAX_BINS_O) {
+        aux = nBins;
+        todos = 1;
+    }
+
+    vetor_bins_sorteados = (int*) malloc(sizeof(int) * aux);
+
+    if (todos) {
+        for(i = 0; i < aux; i++)
+            vetor_bins_sorteados[i] = i;
+    } else {
+        for(i = 0; i < aux; i++) {
+            do{
+                vetor_bins_sorteados[i] = gera_numero_aleatorio(nBins);
+                repetido = 0;
+                j = 0;
+                while ((j < i) && (!repetido)) {
+                    if (vetor_bins_sorteados[i] == vetor_bins_sorteados[j])
+                        repetido = 1;
+                    else
+                        j++;
+                }
+            } while (repetido);
+        }
+    }
+
+    vetor_itens_selecionados = (int*) malloc(sizeof(int) * tamanho_grafo(g));
+
+    for(i = 0; i < aux; i++) {
+        k = 0; // Controla quantos itens daquele bin já foram selecionados.
+        for (j = 0; j < tamanho_grafo(g); j++) {
+            if (bin[j] == vetor_bins_sorteados[i]) {
+                vetor_itens_selecionados[j] = bin[j];
+                k++;
+                if (k == MAX_ITEMS_BIN) // Se já se selecionou o número max. de itens
+                    break;              // interrompe o laço e parte para o prox. bin.
+            } else {
+                vetor_itens_selecionados[j] = -1;
+            }
+        }
+    }
+
+    free(vetor_bins_sorteados); // Libera o vetor auxiliar utilizado para sortear os bins.
+    
+
+
+
+
+
+
+
+
+    //free(vetor_itens_selecionados);
+}
 
 
 /* Implementação da metaheurística Simulated Annealing. Esta técnica começa sua busca a partir
