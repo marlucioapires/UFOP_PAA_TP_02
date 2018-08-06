@@ -23,4 +23,6 @@ int pesquisa_adjascente_exceto(grafo, int, lista, int);
 
 void ordena(grafo, int*);
 
+int eh_adjascente(grafo, int, int);
+
 #endif // GRAFO_H_INCLUDED

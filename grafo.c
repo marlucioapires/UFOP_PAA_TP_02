@@ -192,3 +192,7 @@ void ordena(grafo g, int* pesos_itens)
     mergeSort(g, 0, (g->num_vertices - 1), pesos_itens);
 }
 
+int eh_adjascente(grafo g, int vert1, int vert2) {
+    return g->matriz_adj[vert1][vert2];
+}
+
