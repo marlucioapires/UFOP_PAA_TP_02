@@ -3,16 +3,16 @@
 
 #include "grafo.h"
 
-// nr. de bins a otimizar
-// indice bin
-// capacidade restante bin
-// nr de itens a otimizar
-// indice item
-// bin atual
-// peso item
-// grafo de conflitos
-// bin that each iten will be moved or -1 if no better folution was found
-void otimiza_mip( int n, int c, const int w[], int li[], grafo G, int nli[] );
+/*
+ * n      : nr de items no problema
+ * nBins  : nr. de bins 
+ * r      : capacidade restante de cada bin
+ * w      : peso de cada item
+ * li     : localização item : 0...nBins-1 ou -1 se não será otimizado
+ * G      : grafo de conflitos
+ * nli    : nova localização (bin)
+ **/
+void otimiza_mip( int n, int nBins, int r[], const int w[], int li[], grafo G, int nli[] );
 
 #endif
 
