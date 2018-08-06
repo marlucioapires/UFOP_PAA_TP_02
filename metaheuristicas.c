@@ -197,7 +197,7 @@ int simulated_annealing(int *weight, int capacidade, grafo g, lista *bins_soluca
             vetor_lista_itens_selecionados = gera_vetor_itens_selecionados(
                                                 tamanho_grafo(g), li, tam_solucao);
 
-            otimiza_mip( 0, NULL, NULL, NULL, NULL );
+            otimiza_mip( 0, 0, NULL, NULL, NULL, NULL, NULL );
 
             //free(li);
 
