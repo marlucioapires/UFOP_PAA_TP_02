@@ -12,7 +12,7 @@
 // peso item
 // grafo de conflitos
 // bin that each iten will be moved or -1 if no better folution was found
-void otimiza_mip( int n, const int w[], int li[], grafo G, int nli[] );
+void otimiza_mip( int n, int c, const int w[], int li[], grafo G, int nli[] );
 
 #endif
 

@@ -1,5 +1,7 @@
 #include "otim_mip.h"
 #include "lp.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 /*
  * n   : nr de items no problema
@@ -8,10 +10,16 @@
  * G   : grafo de conflitos
  * nli : nova localização (bin)
  **/
-void otimiza_mip( int n, const int w[], int li[], grafo G, int nli[] )
+void otimiza_mip( int n, int c, const int w[], int li[], grafo G, int nli[] )
 {
     LinearProgram *mip = lp_create();
 
+    char *ivBin; 
+    ivBin = calloc( n, sizeof(char) );
+
+
+
+    free( ivBin );
     lp_free(&mip);
 }
 
