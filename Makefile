@@ -4,9 +4,9 @@ CXX=g++
 
 # flags
 # debug
-CFLAGS=-Og -std=c99 -Wall -g -DGRB -I/opt/gurobi800/linux64/include/
-CXXFLAGS=-Og -g -DGRB -I/opt/gurobi800/linux64/include/
-LDFLAGS=-L/opt/gurobi800/linux64/lib/ -Og -g
+CFLAGS=-Og -std=c99 -Wall -g -DGRB -I/opt/gurobi801/linux64/include/
+CXXFLAGS=-Og -g -DGRB -I/opt/gurobi801/linux64/include/
+LDFLAGS=-L/opt/gurobi801/linux64/lib/ -Og -g
 LIBRARIES=-lgurobi80 -lpthread
 
 
