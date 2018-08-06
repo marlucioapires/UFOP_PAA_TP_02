@@ -12,7 +12,7 @@
  * G      : grafo de conflitos
  * nli    : nova localização (bin)
  **/
-void otimiza_mip( int n, int nBins, int r[], const int w[], int li[], grafo G, int nli[] )
+void otimiza_mip( int n, int nBins, const int r[], const int w[], int li[], grafo G, int nli[] )
 {
     LinearProgram *mip = lp_create();
 

@@ -179,7 +179,7 @@ int simulated_annealing(int *weight, int capacidade, grafo g, lista *bins_soluca
         {
 
 
-            otimiza_mip( 0, 0, NULL, NULL, NULL, NULL );
+            otimiza_mip( 0, 0, NULL, NULL, NULL, NULL, NULL );
 
         }
 
