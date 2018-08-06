@@ -4,6 +4,7 @@
 #include <time.h>
 #include "metaheuristicas.h"
 #include "funcoes.h"
+#include "otim_mip.h"
 
 #define MAX_IT_SEM_M 1000
 #define MAX_BINS_O 5
@@ -22,17 +23,6 @@ unsigned long int funcao_para_comparacao_solucoes(int*, int, int, int, int, int,
 float gera_probabilidade();
 void elimina_bin(lista*, int*, int, int);
 double calcula_segundos_transcorridos(clock_t);
-
-// nr. de bins a otimizar
-// indice bin
-// capacidade restante bin
-// nr de itens a otimizar
-// indice item
-// bin atual
-// peso item
-// grafo de conflitos
-void otimiza_mip( int nBins, int *ibin, int *r,
-        int nItens, int *item, int *bin, int *w, grafo g );
 
 
 /* Implementação da metaheurística Simulated Annealing. Esta técnica começa sua busca a partir
@@ -119,6 +109,8 @@ int simulated_annealing(int *weight, int capacidade, grafo g, lista *bins_soluca
 
         if ( (nrIterSemMelhora++) >= MAX_IT_SEM_M )
         {
+            otimiza_mip( 0, NULL, NULL, NULL, NULL );
+
         }
 
 
