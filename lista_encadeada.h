@@ -48,4 +48,6 @@ int pesquisa_indices_vetor_na_lista(lista, int*);
 
 int pesquisa_indices_vetor_na_lista_exceto(lista, int*, int);
 
+int preenche_vetor_indices_lista(int*, int, lista, int);
+
 #endif // LISTAENCADEADA_H_INCLUDED

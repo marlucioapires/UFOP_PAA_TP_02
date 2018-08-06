@@ -303,3 +303,18 @@ int pesquisa_indices_vetor_na_lista_exceto(lista l, int *vetor, int indice_exclu
 
     return 0;
 }
+
+int preenche_vetor_indices_lista(int *vetor, int tam, lista l, int indice_bin) {
+    tipo_nodo *p;
+
+    p = l->first;
+    while(p) {
+        if (p->item.chave < tam)
+            vetor[p->item.chave] = indice_bin;
+        else
+            return 0;
+        p = p->next;
+    }
+
+    return 1;
+}

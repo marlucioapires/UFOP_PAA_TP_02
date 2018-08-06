@@ -24,6 +24,22 @@ float gera_probabilidade();
 void elimina_bin(lista*, int*, int, int);
 double calcula_segundos_transcorridos(clock_t);
 
+int* gera_vetor_solucao(int num_itens, lista* bins_solucao, int tam_solucao) {
+    int i, *vetor_solucao = NULL;
+
+    vetor_solucao = (int*) malloc(sizeof(int) * num_itens);
+    if (!vetor_solucao)
+        return NULL;
+
+    for(i = 0; i < num_itens; i++)
+        vetor_solucao[i] = -1;
+
+    for(i = 0; i < tam_solucao; i++)
+        preenche_vetor_indices_lista(vetor_solucao, num_itens, bins_solucao[i], i);
+
+    return vetor_solucao;
+}
+
 // nr. de bins a otimizar
 // indice bin
 // capacidade restante bin
@@ -32,17 +48,18 @@ double calcula_segundos_transcorridos(clock_t);
 // bin atual
 // peso item
 // grafo de conflitos
-/*void otimiza_mip( int nBins, int *ibin, int *r,
-        int nItens, int *item, int *bin, int *w, grafo g ) {
+int* gera_vetor_itens_selecionados(int num_itens, int *li, int num_bins) {
     int aux = MAX_BINS_O, *vetor_bins_sorteados, todos = 0, i, j, k, repetido;
-    int *vetor_itens_selecionados;
+    int *vetor_itens_selecionados = NULL;
 
-    if (nBins < MAX_BINS_O) {
-        aux = nBins;
+    if (num_bins < MAX_BINS_O) {
+        aux = num_bins;
         todos = 1;
     }
 
     vetor_bins_sorteados = (int*) malloc(sizeof(int) * aux);
+    if (!vetor_bins_sorteados)
+        return NULL;
 
     if (todos) {
         for(i = 0; i < aux; i++)
@@ -50,7 +67,7 @@ double calcula_segundos_transcorridos(clock_t);
     } else {
         for(i = 0; i < aux; i++) {
             do{
-                vetor_bins_sorteados[i] = gera_numero_aleatorio(nBins);
+                vetor_bins_sorteados[i] = gera_numero_aleatorio(num_bins);
                 repetido = 0;
                 j = 0;
                 while ((j < i) && (!repetido)) {
@@ -63,13 +80,17 @@ double calcula_segundos_transcorridos(clock_t);
         }
     }
 
-    vetor_itens_selecionados = (int*) malloc(sizeof(int) * tamanho_grafo(g));
+    vetor_itens_selecionados = (int*) malloc(sizeof(int) * num_itens);
+    if (!vetor_itens_selecionados) {
+        free(vetor_bins_sorteados);
+        return NULL;
+    }
 
     for(i = 0; i < aux; i++) {
         k = 0; // Controla quantos itens daquele bin já foram selecionados.
-        for (j = 0; j < tamanho_grafo(g); j++) {
-            if (bin[j] == vetor_bins_sorteados[i]) {
-                vetor_itens_selecionados[j] = bin[j];
+        for (j = 0; j < num_itens; j++) {
+            if (li[j] == vetor_bins_sorteados[i]) {
+                vetor_itens_selecionados[j] = li[j];
                 k++;
                 if (k == MAX_ITEMS_BIN) // Se já se selecionou o número max. de itens
                     break;              // interrompe o laço e parte para o prox. bin.
@@ -81,16 +102,8 @@ double calcula_segundos_transcorridos(clock_t);
 
     free(vetor_bins_sorteados); // Libera o vetor auxiliar utilizado para sortear os bins.
     
-
-
-
-
-
-
-
-
-    //free(vetor_itens_selecionados);
-}*/
+    return vetor_itens_selecionados;
+}
 
 
 /* Implementação da metaheurística Simulated Annealing. Esta técnica começa sua busca a partir
@@ -131,6 +144,7 @@ int simulated_annealing(int *weight, int capacidade, grafo g, lista *bins_soluca
 {
 
     int j, c1, c2, pos_i1, pos_i2, trocar_solucao; // Variáveis auxiliares.
+    int *vetor_lista_itens_selecionados = NULL, *li = NULL;
 
     unsigned long int sol1, sol2; // Variáveis auxiliares usadas para armazenar os valores da
     // solução inicial s (sol1) e da solução s' (sol2).
@@ -178,8 +192,14 @@ int simulated_annealing(int *weight, int capacidade, grafo g, lista *bins_soluca
         if ( (nrIterSemMelhora++) >= MAX_IT_SEM_M )
         {
 
+            li = gera_vetor_solucao(tamanho_grafo(g), bins_solucao, tam_solucao);
+
+            vetor_lista_itens_selecionados = gera_vetor_itens_selecionados(
+                                                tamanho_grafo(g), li, tam_solucao);
 
             otimiza_mip( 0, NULL, NULL, NULL, NULL );
+
+            //free(li);
 
         }
 
