@@ -5,6 +5,10 @@
 #include "metaheuristicas.h"
 #include "funcoes.h"
 
+#define MAX_IT_SEM_M 1000
+#define MAX_BINS_O 5
+#define MAX_ITEMS_BIN 100
+
 
 /** ASSINATURAS DE FUNÇÕES INTERNAS, CUJAS IMPLEMENTAÇÕES SE ENCONTRAM NO
   * FINAL DO ARQUIVO.
@@ -18,6 +22,17 @@ unsigned long int funcao_para_comparacao_solucoes(int*, int, int, int, int, int,
 float gera_probabilidade();
 void elimina_bin(lista*, int*, int, int);
 double calcula_segundos_transcorridos(clock_t);
+
+// nr. de bins a otimizar
+// indice bin
+// capacidade restante bin
+// nr de itens a otimizar
+// indice item
+// bin atual
+// peso item
+// grafo de conflitos
+void otimiza_mip( int nBins, int *ibin, int *r,
+        int nItens, int *item, int *bin, int *w, grafo g );
 
 
 /* Implementação da metaheurística Simulated Annealing. Esta técnica começa sua busca a partir
@@ -90,6 +105,8 @@ int simulated_annealing(int *weight, int capacidade, grafo g, lista *bins_soluca
 
     inicia_gerador_numero_aleatorio(); // "Semeia" a geração de números aleatórios.
 
+    int nrIterSemMelhora = 0;
+
     // Calcula a função de avaliação (função objetivo) da solução inicial.
     sol1 = funcao_para_comparacao_solucoes(bin_rem, tam_solucao, capacidade, 0, 0, 0, 0);
 
@@ -99,6 +116,11 @@ int simulated_annealing(int *weight, int capacidade, grafo g, lista *bins_soluca
     //      - Tamanho da solução se torna igual ao lower bound (solução ótima).
     while ( (calcula_segundos_transcorridos(tempo_inicial) < segundos_tempo_maximo) &&
             (temperatura > epsilon) && (tam_solucao > lower_bound) ) {
+
+        if ( (nrIterSemMelhora++) >= MAX_IT_SEM_M )
+        {
+        }
+
 
         // Gera aleatoriamente uma solução vizinha e computa a função de avaliação.
         // Apenas computa uma nova solução, sem realizar movimentações de itens entre
@@ -125,6 +147,8 @@ int simulated_annealing(int *weight, int capacidade, grafo g, lista *bins_soluca
 
             if (trocar_solucao) { // Verifica se a solução será trocada.
                 sol1 = sol2; // Troca a solução.
+
+                nrIterSemMelhora = 0;
 
                 // Concretiza a troca de soluções, realizando a movimentação de itens entre
                 // os contêineres (bins).
